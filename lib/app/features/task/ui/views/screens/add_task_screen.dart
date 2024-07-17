@@ -58,7 +58,6 @@ class _AddTaskScreenState extends ConsumerState<AddTaskScreen> {
                 ref.read(taskControllerProvider.notifier).writeTask(
                     Task(title: _taskTextController.text, isDone: false));
 
-                print(_taskTextController.text);
               },
             ),
           ],

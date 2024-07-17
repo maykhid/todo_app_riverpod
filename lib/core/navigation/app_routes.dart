@@ -1,5 +1,4 @@
 import 'package:go_router/go_router.dart';
-import 'package:todo_app_riverpod/app/features/task/data/model/task.dart';
 import 'package:todo_app_riverpod/app/features/task/ui/views/screens/add_task_screen.dart';
 import 'package:todo_app_riverpod/app/features/task/ui/views/screens/edit_task_screen.dart';
 import 'package:todo_app_riverpod/app/features/task/ui/views/screens/home_screen.dart';

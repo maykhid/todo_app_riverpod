@@ -4,7 +4,6 @@ import 'package:gap/gap.dart';
 import 'package:roundcheckbox/roundcheckbox.dart';
 import 'package:todo_app_riverpod/app/features/task/data/model/task.dart';
 import 'package:todo_app_riverpod/app/features/task/ui/controllers/task_controller.dart';
-import 'package:todo_app_riverpod/app/features/task/ui/views/screens/edit_task_screen.dart';
 import 'package:todo_app_riverpod/app/features/task/ui/views/widgets/edit_button.dart';
 
 class TaskTile extends ConsumerStatefulWidget {

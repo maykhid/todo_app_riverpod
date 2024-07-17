@@ -1,4 +1,3 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:injectable/injectable.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:todo_app_riverpod/app/features/task/data/dao/task_dao.dart';
@@ -8,6 +7,11 @@ import 'package:todo_app_riverpod/core/di/di.dart';
 part 'task_repository.g.dart';
 
 @singleton
+/// [TaskRepository] here tries to mimic asynchronous tasks similar 
+/// to how it would look if our crud functions were getting it's data
+/// from a server. So we are assuming the data fetched here is coming 
+/// from a server somewhere far, far away, from a distant land 🌚
+/// 
 class TaskRepository {
   TaskRepository({required TaskDao taskDao}) : _taskDao = taskDao;
 

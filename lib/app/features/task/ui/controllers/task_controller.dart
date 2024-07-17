@@ -5,6 +5,14 @@ import 'package:todo_app_riverpod/app/features/task/data/task_repository.dart';
 part 'task_controller.g.dart';
 
 @riverpod
+/// [TaskController] is basically our state manager handling state updates
+/// for our Tasks/Todos.
+/// 
+/// Notice how the [Tasks] state is updated. We update the state manually, simply to mitigate too many server 'fetches'
+/// when the state changes. This however has it's downsides, for further info see:
+/// 
+/// https://riverpod.dev/docs/essentials/side_effects#updating-the-local-cache-manually
+/// 
 class TaskController extends _$TaskController {
   @override
   FutureOr<Tasks> build() {
