@@ -59,59 +59,82 @@ class HomeScreen extends ConsumerWidget {
       ),
       body: SingleChildScrollView(
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             const AdWidget(),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 12),
-              child: taskState.tasks.isEmpty
-                  ? const Message(
-                      message:
-                          'You have no Tasks yet, click the FAB to add new tasks',
-                    )
-                  : ListView.builder(
-                      shrinkWrap: true,
-                      itemBuilder: (context, index) => Padding(
-                        padding: const EdgeInsets.only(top: 15),
-                        child: TaskTile(
-                          index: index,
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                child: switch (taskState) {
+                  AsyncData(:final value) => value.tasks.isEmpty
+                      ? const Message(
+                          message:
+                              'You have no Tasks yet, click the FAB to add new tasks',
+                        )
+                      : ListView.builder(
+                          shrinkWrap: true,
+                          itemBuilder: (context, index) => Padding(
+                            padding: const EdgeInsets.only(top: 15),
+                            child: TaskTile(
+                              index: index,
+                            ),
+                          ),
+                          // separatorBuilder: (context, index) => const Gap(10),
+                          itemCount: value.tasks.length,
                         ),
-                      ),
-                      // separatorBuilder: (context, index) => const Gap(10),
-                      itemCount: taskState.tasks.length,
-                    ),
-              // ref.(
-              //   //error
-              //   error: (message) => Message(message: message.errorMessage),
+                  AsyncError() =>
+                    const Text('Oops, something unexpected happened'),
+                  _ => const CircularProgressIndicator(),
+                }
 
-              //   // loaded
-              //   loaded: (response) {
-              //     final tasks = response.tasks.tasks;
+                // taskState.tasks.isEmpty
+                //     ? const Message(
+                //         message:
+                //             'You have no Tasks yet, click the FAB to add new tasks',
+                //       )
+                //     : ListView.builder(
+                //         shrinkWrap: true,
+                //         itemBuilder: (context, index) => Padding(
+                //           padding: const EdgeInsets.only(top: 15),
+                //           child: TaskTile(
+                //             index: index,
+                //           ),
+                //         ),
+                //         // separatorBuilder: (context, index) => const Gap(10),
+                //         itemCount: taskState.tasks.length,
+                //       ),
+                // ref.(
+                //   //error
+                //   error: (message) => Message(message: message.errorMessage),
 
-              //     if (tasks.isEmpty) {
-              //       return const Message(
-              //         message:
-              //             'You have no Tasks yet, click the FAB to add new tasks',
-              //       );
-              //     }
+                //   // loaded
+                //   loaded: (response) {
+                //     final tasks = response.tasks.tasks;
 
-              //     return ListView.builder(
-              //       shrinkWrap: true,
-              //       itemBuilder: (context, index) => Padding(
-              //         padding: const EdgeInsets.only(top: 15),
-              //         child: TaskTile(
-              //           task: tasks[index],
-              //           index: index,
-              //         ),
-              //       ),
-              //       // separatorBuilder: (context, index) => const Gap(10),
-              //       itemCount: tasks.length,
-              //     );
-              //   },
-              //   orElse: () {
-              //     return Container();
-              //   },
-              // ),
-            ),
+                //     if (tasks.isEmpty) {
+                //       return const Message(
+                //         message:
+                //             'You have no Tasks yet, click the FAB to add new tasks',
+                //       );
+                //     }
+
+                //     return ListView.builder(
+                //       shrinkWrap: true,
+                //       itemBuilder: (context, index) => Padding(
+                //         padding: const EdgeInsets.only(top: 15),
+                //         child: TaskTile(
+                //           task: tasks[index],
+                //           index: index,
+                //         ),
+                //       ),
+                //       // separatorBuilder: (context, index) => const Gap(10),
+                //       itemCount: tasks.length,
+                //     );
+                //   },
+                //   orElse: () {
+                //     return Container();
+                //   },
+                // ),
+                ),
           ],
         ),
       ),

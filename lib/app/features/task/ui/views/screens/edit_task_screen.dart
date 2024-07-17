@@ -11,11 +11,11 @@ import 'package:todo_app_riverpod/app/shared/utils/sized_context.dart';
 
 class EditTaskScreen extends ConsumerStatefulWidget {
   const EditTaskScreen({
-    required this.index,
+    required this.taskProps,
     super.key,
   });
 
-  final int index;
+  final TaskProps taskProps;
 
   @override
   ConsumerState<EditTaskScreen> createState() => _EditTaskScreenState();
@@ -25,9 +25,12 @@ class _EditTaskScreenState extends ConsumerState<EditTaskScreen> {
   final TextEditingController _taskController = TextEditingController();
 
   late Task task;
+  late int index;
+
   @override
   void initState() {
-    task = ref.read(taskControllerProvider).tasks[widget.index];
+    task = widget.taskProps.task;
+    index = widget.taskProps.index;
     _taskController.text = task.title;
 
     super.initState();
@@ -42,8 +45,8 @@ class _EditTaskScreenState extends ConsumerState<EditTaskScreen> {
   @override
   Widget build(BuildContext context) {
     // info.task = ref.read(taskControllerProvider).tasks[0];
-    ref.listen(taskControllerProvider, (previous, next) {
-      if (previous != next) {
+    ref.listen(taskControllerProvider, (_, next) {
+      if (next.asData?.hasValue ?? false) {
         context.pop();
       }
     });
@@ -55,7 +58,7 @@ class _EditTaskScreenState extends ConsumerState<EditTaskScreen> {
         title: const Text('Edit Task'),
         actions: [
           IconButton(
-              onPressed: () => taskController.deleteTask(widget.index),
+              onPressed: () => taskController.deleteTask(index),
               icon: const Icon(Icons.delete))
         ],
       ),
@@ -87,9 +90,10 @@ class _EditTaskScreenState extends ConsumerState<EditTaskScreen> {
             AppButton(
               text: 'Done',
               width: context.width,
+              isLoading: ref.watch(taskControllerProvider).isLoading,
               onPressed: () => taskController.updateTask(
                 Task(title: _taskController.text, isDone: task.isDone),
-                widget.index,
+                index,
               ),
             ),
           ],
@@ -99,9 +103,11 @@ class _EditTaskScreenState extends ConsumerState<EditTaskScreen> {
   }
 }
 
-class EditTaskInfo {
-  EditTaskInfo({required this.task, required this.index});
+// class EditTaskInfo {
+//   EditTaskInfo({required this.task, required this.index});
 
-  final Task task;
-  final int index;
-}
+//   final Task task;
+//   final int index;
+// }
+
+typedef TaskProps = ({Task task, int index});

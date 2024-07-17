@@ -5,16 +5,16 @@ import 'package:todo_app_riverpod/app/shared/ui/app_colors.dart';
 
 class EditButton extends StatelessWidget {
   const EditButton({
-    required this.editTaskInfo,
+    required this.props,
     super.key,
   });
 
-  final EditTaskInfo editTaskInfo;
+  final TaskProps props;
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () => context.push('/editTask', extra: editTaskInfo.index),
+      onTap: () => context.push('/editTask', extra: props),
       child: Container(
         width: 51,
         height: 45,

@@ -7,39 +7,50 @@ part 'task_controller.g.dart';
 @riverpod
 class TaskController extends _$TaskController {
   @override
-  Tasks build() {
+  FutureOr<Tasks> build() {
     // return a value (or do nothing if the return type is void)
     return getAllTasks();
   }
 
-  void deleteAllTasks() {
+  Future<void> deleteAllTasks() async {
     final taskRepository = ref.read(taskRepositoryProvider);
-    taskRepository.deleteAllTasks();
-    state = getAllTasks();
+    state = await AsyncValue.guard(() async {
+      await taskRepository.deleteAllTasks();
+      return state.value!..tasks.clear();
+    });
   }
 
-  Tasks getAllTasks() {
+  Future<Tasks> getAllTasks() async {
     final taskRepository = ref.read(taskRepositoryProvider);
     return taskRepository.getAllTasks();
   }
 
-  void updateTask(Task task, int index) {
+  Future<void> updateTask(Task task, int index) async {
     final taskRepository = ref.read(taskRepositoryProvider);
-    taskRepository.updateTask(task, index);
-    state = getAllTasks();
+    state = const AsyncLoading();
+    state = await AsyncValue.guard(() async {
+      await taskRepository.updateTask(task, index);
+      return state.value!
+        ..tasks.removeAt(index)
+        ..tasks.insert(index, task);
+    });
   }
 
-  void writeTask(Task task) {
+  Future<void> writeTask(Task task) async {
     final taskRepository = ref.read(taskRepositoryProvider);
-    taskRepository.writeTask(task);
-    state = getAllTasks();
-    // ref.invalidate(taskRepositoryProvider);
+    state = const AsyncLoading();
+    state = await AsyncValue.guard(() async {
+      await taskRepository.writeTask(task);
+      return state.value!..tasks.add(task);
+    });
   }
 
-  void deleteTask(int index) {
+  Future<void> deleteTask(int index) async {
     final taskRepository = ref.read(taskRepositoryProvider);
-    taskRepository.deleteTask(index);
-    state = getAllTasks();
-    // ref.invalidate(taskRepositoryProvider);
+    state = const AsyncLoading();
+    state = await AsyncValue.guard(() async {
+      await taskRepository.deleteTask(index);
+      return state.value!..tasks.removeAt(index);
+    });
   }
 }

@@ -16,12 +16,13 @@ class AddTaskScreen extends ConsumerStatefulWidget {
 }
 
 class _AddTaskScreenState extends ConsumerState<AddTaskScreen> {
-  final TextEditingController _taskController = TextEditingController();
+  final TextEditingController _taskTextController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
-    ref.listen(taskControllerProvider, (previous, next) {
-      if (previous != next) {
+    ref.listen(taskControllerProvider, (_, next) {
+      // print(next.isLoading);
+      if (next.asData!.hasValue) {
         context.pop();
       }
     });
@@ -44,7 +45,7 @@ class _AddTaskScreenState extends ConsumerState<AddTaskScreen> {
 
             // task text field
             AppTextField(
-              controller: _taskController,
+              controller: _taskTextController,
             ),
 
             const Spacer(),
@@ -52,11 +53,12 @@ class _AddTaskScreenState extends ConsumerState<AddTaskScreen> {
             AppButton(
               text: 'Done',
               width: context.width,
+              isLoading: ref.watch(taskControllerProvider).isLoading,
               onPressed: () {
                 ref.read(taskControllerProvider.notifier).writeTask(
-                    Task(title: _taskController.text, isDone: false));
+                    Task(title: _taskTextController.text, isDone: false));
 
-                print(_taskController.text);
+                print(_taskTextController.text);
               },
             ),
           ],

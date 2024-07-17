@@ -13,27 +13,35 @@ class TaskRepository {
 
   final TaskDao _taskDao;
 
-  Tasks getAllTasks() {
+  static const _duration = Duration(seconds: 2);
+
+  Future<Tasks> getAllTasks() async {
+    await Future.delayed(_duration);
     return _taskDao.getAllTasks();
   }
 
-  void deleteAllTasks() {
+  Future<void> deleteAllTasks() async {
+    await Future.delayed(_duration);
     _taskDao.deleteAllTasks();
   }
 
-  Task? readTask(int taskIndex) {
+  Future<Task?> readTask(int taskIndex) async {
+    await Future.delayed(_duration);
     return _taskDao.readTask(taskIndex);
   }
 
-  void updateTask(Task newTask, int taskIndex) {
+  Future<void> updateTask(Task newTask, int taskIndex) async {
+    await Future.delayed(_duration);
     _taskDao.updateTask(newTask, taskIndex);
   }
 
-  void writeTask(Task newTask) {
+  Future<void> writeTask(Task newTask) async {
+    await Future.delayed(_duration);
     _taskDao.writeTask(newTask);
   }
 
-  void deleteTask(int index) {
+  Future<void> deleteTask(int index) async {
+   await Future.delayed(_duration);
     _taskDao.deleteTask(index);
   }
 }

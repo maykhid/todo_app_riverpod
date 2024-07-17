@@ -24,7 +24,20 @@ class TaskTile extends ConsumerStatefulWidget {
 class _TaskTileState extends ConsumerState<TaskTile> {
   @override
   Widget build(BuildContext context) {
-    final task = ref.read(taskControllerProvider).tasks[widget.index];
+    // final task = ref.read(taskControllerProvider).tasks[widget.index];
+
+    final state = ref.watch(taskControllerProvider);
+
+    // if (state.isLoading) {
+    //   return const CircularProgressIndicator();
+    // } else {}
+
+    // switch (state) {
+    //   case AsyncLoading():
+    //     const CircularProgressIndicator();
+    //     break;
+    //   default:
+    // }
     return Container(
       height: 91,
       padding: const EdgeInsets.all(12),
@@ -33,41 +46,64 @@ class _TaskTileState extends ConsumerState<TaskTile> {
         border: Border.all(color: Colors.grey, width: 0.5),
         borderRadius: const BorderRadius.all(Radius.circular(6)),
       ),
-      child: Row(
-        children: [
-          // checkbox
-          RoundCheckBox(
-            size: 32,
-            isChecked: task.isDone,
-            onTap: (selected) {
-              final newTask = Task(isDone: selected!, title: task.title);
-              ref
-                  .read(taskControllerProvider.notifier)
-                  .updateTask(newTask, widget.index);
-            },
+      child: switch (state) {
+        AsyncData(:final value) => _TileContent(
+            task: value.tasks[widget.index],
+            index: widget.index,
           ),
+        AsyncError() => const Text('Oops, something unexpected happened'),
+        _ => const CircularProgressIndicator(),
+      },
+    );
+  }
+}
 
-          const Gap(12),
+class _TileContent extends ConsumerWidget {
+  const _TileContent({
+    required this.task,
+    required this.index,
+  });
 
-          // text
-          Text(
-            task.title,
-            style: TextStyle(
-              color: task.isDone ? Colors.grey : Colors.black,
-              decoration: task.isDone ? TextDecoration.lineThrough : null,
-              decorationColor: Colors.black,
-            ),
+  final Task task;
+  final int index;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    // final task = ref.read(taskControllerProvider).tasks[widget.index];
+    return Row(
+      children: [
+        // checkbox
+        RoundCheckBox(
+          size: 32,
+          isChecked: task.isDone,
+          onTap: (selected) {
+            final newTask = Task(isDone: selected!, title: task.title);
+            ref
+                .read(taskControllerProvider.notifier)
+                .updateTask(newTask, index);
+          },
+        ),
+
+        const Gap(12),
+
+        // text
+        Text(
+          task.title,
+          style: TextStyle(
+            color: task.isDone ? Colors.grey : Colors.black,
+            decoration: task.isDone ? TextDecoration.lineThrough : null,
+            decorationColor: Colors.black,
           ),
+        ),
 
-          const Spacer(),
+        const Spacer(),
 
-          // edit btn
+        // edit btn
 
-          EditButton(
-            editTaskInfo: EditTaskInfo(task: task, index: widget.index),
-          ),
-        ],
-      ),
+        EditButton(
+          props: (task: task, index: index),
+        ),
+      ],
     );
   }
 }
