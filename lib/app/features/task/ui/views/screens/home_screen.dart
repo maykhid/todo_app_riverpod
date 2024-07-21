@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
+import 'package:todo_app_riverpod/app/features/task/data/model/task.dart';
 import 'package:todo_app_riverpod/app/features/task/ui/controllers/task_controller.dart';
 import 'package:todo_app_riverpod/app/features/task/ui/views/widgets/task_tile.dart';
 import 'package:todo_app_riverpod/app/shared/ui/app_colors.dart';
@@ -14,7 +15,16 @@ class HomeScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     // final authCubit = context.read<AuthenticationCubit>();
 
-    final taskState = ref.watch(taskControllerProvider);
+    // final taskState = ref.watch(taskControllerProvider);
+    final allTasksState = ref.watch(getTasksProvider);
+
+    ref.listen(taskControllerProvider, (_, next) {
+      // print(next.isLoading);
+      if (next.hasError) {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(const SnackBar(content: Text('An error occured')));
+      }
+    });
 
     return Scaffold(
       appBar: AppBar(
@@ -64,23 +74,14 @@ class HomeScreen extends ConsumerWidget {
             const AdWidget(),
             Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 12),
-                child: switch (taskState) {
+                child: switch (allTasksState) {
+                  // has async data
                   AsyncData(:final value) => value.tasks.isEmpty
                       ? const Message(
                           message:
                               'You have no Tasks yet, click the FAB to add new tasks',
                         )
-                      : ListView.builder(
-                          shrinkWrap: true,
-                          itemBuilder: (context, index) => Padding(
-                            padding: const EdgeInsets.only(top: 15),
-                            child: TaskTile(
-                              index: index,
-                            ),
-                          ),
-                          // separatorBuilder: (context, index) => const Gap(10),
-                          itemCount: value.tasks.length,
-                        ),
+                      : TasksList(value: value),
                   AsyncError() =>
                     const Text('Oops, something unexpected happened'),
                   _ => const CircularProgressIndicator(),
@@ -138,6 +139,30 @@ class HomeScreen extends ConsumerWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+class TasksList extends StatelessWidget {
+  const TasksList({
+    super.key,
+    required this.value,
+  });
+
+  final Tasks value;
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView.builder(
+      shrinkWrap: true,
+      itemBuilder: (context, index) => Padding(
+        padding: const EdgeInsets.only(top: 15),
+        child: TaskTile(
+          index: index,
+        ),
+      ),
+      // separatorBuilder: (context, index) => const Gap(10),
+      itemCount: value.tasks.length,
     );
   }
 }

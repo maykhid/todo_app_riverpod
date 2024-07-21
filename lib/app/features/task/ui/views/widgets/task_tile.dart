@@ -45,30 +45,27 @@ class _TaskTileState extends ConsumerState<TaskTile> {
         border: Border.all(color: Colors.grey, width: 0.5),
         borderRadius: const BorderRadius.all(Radius.circular(6)),
       ),
-      child: switch (state) {
-        AsyncData(:final value) => _TileContent(
-            task: value.tasks[widget.index],
+      child: 
+         _TileContent(
             index: widget.index,
           ),
-        AsyncError() => const Text('Oops, something unexpected happened'),
-        _ => const CircularProgressIndicator(),
-      },
+        // AsyncError() => const Text('Oops, something unexpected happened'),
+        // _ => const CircularProgressIndicator(),
+      
     );
   }
 }
 
 class _TileContent extends ConsumerWidget {
   const _TileContent({
-    required this.task,
     required this.index,
   });
 
-  final Task task;
   final int index;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // final task = ref.read(taskControllerProvider).tasks[widget.index];
+    final task = ref.watch(getTasksProvider).value!.tasks[index];
     return Row(
       children: [
         // checkbox
@@ -76,10 +73,10 @@ class _TileContent extends ConsumerWidget {
           size: 32,
           isChecked: task.isDone,
           onTap: (selected) {
-            final newTask = Task(isDone: selected!, title: task.title);
+            final newTask = Task(isDone: !task.isDone, title: task.title);
             ref
                 .read(taskControllerProvider.notifier)
-                .updateTask(newTask, index);
+                .checkTask(newTask, index);
           },
         ),
 

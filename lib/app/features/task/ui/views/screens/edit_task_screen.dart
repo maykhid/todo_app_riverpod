@@ -46,7 +46,11 @@ class _EditTaskScreenState extends ConsumerState<EditTaskScreen> {
   Widget build(BuildContext context) {
     // info.task = ref.read(taskControllerProvider).tasks[0];
     ref.listen(taskControllerProvider, (_, next) {
-      if (next.asData?.hasValue ?? false) {
+      // print(next.isLoading);
+      if (next.hasError) {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(const SnackBar(content: Text('An error occured')));
+      } else if (!next.isLoading) {
         context.pop();
       }
     });

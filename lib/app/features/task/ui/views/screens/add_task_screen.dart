@@ -22,7 +22,10 @@ class _AddTaskScreenState extends ConsumerState<AddTaskScreen> {
   Widget build(BuildContext context) {
     ref.listen(taskControllerProvider, (_, next) {
       // print(next.isLoading);
-      if (next.asData!.hasValue) {
+      if (next.hasError) {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(const SnackBar(content: Text('An error occured')));
+      } else if (!next.isLoading) {
         context.pop();
       }
     });
@@ -57,7 +60,6 @@ class _AddTaskScreenState extends ConsumerState<AddTaskScreen> {
               onPressed: () {
                 ref.read(taskControllerProvider.notifier).writeTask(
                     Task(title: _taskTextController.text, isDone: false));
-
               },
             ),
           ],
